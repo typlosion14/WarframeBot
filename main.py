@@ -26,13 +26,13 @@ def options(args, message):
     elif args[1] == 'language':
         if args[2] == 'fr':
             configch(str(message.guild.id), 'LANGUAGE', 'fr')
-            return "Le bot est maintenant en français."
+            return "Le bot est maintenant en franÃ§ais."
         elif args[2] == 'en':
             configch(str(message.guild.id), 'LANGUAGE', 'en')
             return "The bot is now in english."
         elif args[2] == 'pt':
             configch(str(message.guild.id), 'LANGUAGE', 'pt')
-            return "O robô está agora em português."
+            return "O robÃ´ estÃ¡ agora em portuguÃªs."
         else:
             return "The bot is only available in english,french and portuguese.(en,fr,pt)"
     elif args[1] == 'timer':
@@ -389,113 +389,11 @@ def main():
                 except (AttributeError, discord.errors.NotFound):
                     pass
                 await message.channel.send(embed=Invasions(client))
-            ##################
-            #  ^^^^^^^^^^^^  #
-            #      BOT       #
-            #                #
-            #     Server     #
-            #  vvvvvvvvvvvv  #
-            ##################
-            elif message.guild is not None and message.guild.id == 592288662058958878:
-                if ('discord.gg/' in str(message.content).lower() or 'discordapp.com' in str(
-                        message.content).lower()) and message.author != client.user:
-                    await message.delete()
-                    await message.author.add_roles(discord.utils.get(message.author.guild.roles, name="Muted"))
-                    await client.get_channel(611953638675316756).send(
-                        embed=discord.Embed(title=str(message.author), description=message.content, color=0xFF0000))
-                elif message.content.startswith(Settings.commandbegin + 'notif'):
-                    await message.delete()
-                    args = message.content.split(" ")
-                    interr = ' '.join(args[1:]).lower()
-                    if len(args) == 1 or (interr != 'off' and interr != 'on'):
-                        await message.channel.send(Traduction.notiferror())
-                    else:
-                        if interr == 'on':
-                            await message.author.add_roles(
-                                discord.utils.get(message.author.guild.roles, name="Notif Patch Notes"))
-                            await message.author.send(Traduction.NotifOn())
-                        else:
-                            await message.author.remove_roles(
-                                discord.utils.get(message.author.guild.roles, name="Notif Patch Notes"))
-                            await message.author.send(Traduction.NotifOff())
-
-                elif message.content.startswith(
-                        Settings.commandbegin + 'game') and message.author.guild_permissions.administrator:
-                    await message.delete()
-                    args = message.content.split(" ")
-                    await client.change_presence(activity=discord.Game(name=' '.join(args[1:]).lower()))
-                elif message.content.startswith(
-                        Settings.commandbegin + 'senddm') and message.author.guild_permissions.administrator:
-                    await message.delete()
-                    args = message.content.split(" ")
-                    embed = discord.Embed(title='Message', description=' '.join(args[2:]), color=0x00ff00)
-                    embed.set_author(name=str(message.author), icon_url=str(message.author.avatar_url))
-                    embed.set_thumbnail(url=client.user.avatar_url)
-                    embed.set_footer(text='You can add ' + str(message.author) + ' for respond!')
-                    await client.get_user(int(args[1])).send(embed=embed)
-                elif message.content.startswith(
-                        Settings.commandbegin + 'stop') and message.author.guild_permissions.administrator:
-                    await message.delete()
-                    exit()
-                elif message.content.startswith(
-                        Settings.commandbegin + 'logs') and message.author.guild_permissions.administrator:
-                    await message.delete()
-                    logs = discord.File("/root/.pm2/logs/main-out.log", filename="logs main.txt")
-                    logs2 = discord.File("/root/.pm2/logs/main-error.log", filename="logs error.txt")
-                    embed = discord.Embed(title="Nombre de Serveur", description=str(len(client.guilds)))
-                    await message.channel.send(embed=embed)
-                    await message.channel.send("Logs main", file=logs)
-                    await message.channel.send("Logs error", file=logs2)
-                elif message.content.startswith(
-                        Settings.commandbegin + 'purge') and message.author.guild_permissions.administrator:
-                    await message.delete()
-        except discord.errors.Forbidden:
-            await message.author.send(
-                "Hello! Thanks for add me on your server!\nIt's seems I have a problem with permissions I need to:\n- Manage Messages\n- Insert link\n- Read the channel\n- Send message in the channel")
-            # await message.guild.owner.send(
-            #    "Hello! Thanks for add me on your server!\nIt's seems I have a problem with permissions I need to:\n- Manage Messages\n- Insert link\n- Read the channel\n- Send message in the channel")
-
-    @client.event
-    async def on_member_join(member):
-        if member.guild.id == 592288662058958878:
-            await client.get_channel(612030022152355853).send(str(
-                'Welcome ' + member.mention + "!\nIf you have any issue, post it here:<#606848095183044628> !\nAlso if you have any question, you can dm <@!144427933472260096>\nWe're now: " + str(
-                    len(client.get_guild(592288662058958878).members) - 6)))
-
-    @client.event
-    async def on_guild_join(server):
-        setupdate(server.id)
-        embed = discord.Embed(title='Join a new server.', description=str(client.user.name + ' join a new server!'),
-                              color=0x00ff00)
-        embed.set_author(name=server.name, icon_url=server.icon_url)
-        embed.add_field(name='Proprietaire', value=server.owner)
-        embed.add_field(name='Nombre de Membres', value=server.member_count)
-        embed.add_field(name='Nombre de serveur total', value=str(len(client.guilds)))
-        embed.add_field(name='Server ID', value=str(server.id))
-        embed.set_thumbnail(url=server.icon_url)
-        embed.set_footer(text=datetime.today().strftime("%d/%m/%Y"))
-        updateservercount(str(len(client.guilds)))
-        await client.get_channel(611953638675316756).send(embed=embed)
-
-    @client.event
-    async def on_guild_remove(server):
-        embed = discord.Embed(title='left a server.', description=str(client.user.name + ' left a server...'),
-                              color=0xFF0000)
-        embed.set_author(name=server.name, icon_url=server.icon_url)
-        embed.add_field(name='Proprietaire', value=server.owner)
-        embed.add_field(name='Nombre de Membres', value=server.member_count)
-        embed.add_field(name='Nombre de serveur total', value=str(len(client.guilds)))
-        embed.add_field(name='Server ID', value=str(server.id))
-        embed.set_thumbnail(url=server.icon_url)
-        updateservercount(str(len(client.guilds)))
-        embed.set_footer(text=datetime.today().strftime("%d/%m/%Y"))
-        await client.get_channel(611953638675316756).send(embed=embed)
-
+          
     @client.event
     async def on_ready():
         print('Logged in as')
         print(client.user.name)
-        ##print(getip())
         print('------------')
 
     client.run(token)
